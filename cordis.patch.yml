@@ -1,0 +1,4 @@
+# Bundle patch for @orderg-x/dsh-pages
+- insert:
+    - id: orderg-x-pages
+      name: '@orderg-x/dsh-pages'
