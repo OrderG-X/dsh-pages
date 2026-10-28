@@ -102,7 +102,8 @@ test('坏页面：报错、溢出、深色没适配都说出来', { skip }, asyn
 test('嵌进对话的高度：量出来放在结果最后一行；100vh 加边距越撑越长的会说出来', { skip }, async () => {
   const short = await tool.execute({ title: '短', html: GOOD })
   const h = Number(out(short).match(/&h=(\d+)$/)[1])
-  assert.ok(h > 200 && h < 420, '短页面按内容高度：' + h)
+  // 字体不同（CI 机器上）折行不同，只看量的是内容、不是 420 的视口
+  assert.ok(h > 120 && h < 400, '短页面按内容高度：' + h)
   const tall = await tool.execute({ title: '长', html: GOOD.replace('</p>', '</p>' + '<p>一行</p>'.repeat(40)) })
   assert.ok(Number(out(tall).match(/&h=(\d+)$/)[1]) > 1000)
   const runaway = await tool.execute({ title: '跟着窗口长', html: '<!doctype html><html><head><style>:root[data-theme=dark]{background:#111}body{margin:0;padding:16px}.app{min-height:100vh}</style></head><body><div class="app">x</div></body></html>' })
