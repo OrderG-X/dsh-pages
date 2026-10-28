@@ -24,8 +24,6 @@
 
 ## 安装
 
-> 0.1.0 还没发到 npm，下面这条要等发版后才能用；现在想试，用本节最后的本地装法。
-
 ```sh
 dsh plugin add @orderg-x/dsh-pages
 ```
