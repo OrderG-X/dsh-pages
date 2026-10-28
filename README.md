@@ -28,7 +28,7 @@
 dsh plugin add @orderg-x/dsh-pages
 ```
 
-装完**重启 DSH**（客户端代码在 DSH 启动时打包，不重启看不到页面）。DSH「插件」页里显示为「页面」。
+也可以直接装发布包：`dsh plugin add https://github.com/OrderG-X/dsh-pages/releases/latest/download/dsh-pages.tgz`。装完**重启 DSH**（客户端代码在 DSH 启动时打包，不重启看不到页面）。DSH「插件」页里显示为「页面」。
 
 开发时可以直接链到本地目录：`dsh plugin --profile desktop add link:/path/to/dsh-pages`，改了代码同样要重启。
 
