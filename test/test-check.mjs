@@ -249,6 +249,57 @@ addEventListener('message', (e) => { if (e.data && e.data.type === 'dsp-state-sy
   ])
 })
 
+test('storage 事件：storageArea 就是 localStorage、清空是 key=null；监听撤掉了就当没人听，回来要重载', { skip }, async () => {
+  const html = `<!doctype html><html><head><script>
+const f = (e) => parent.postMessage({ type: 't-storage', key: e.key, area: e.storageArea === localStorage, oldValue: e.oldValue, newValue: e.newValue }, '*')
+addEventListener('storage', f)
+localStorage.setItem('a', '1')
+addEventListener('message', (e) => {
+  if (e.data && e.data.type === 't-off') removeEventListener('storage', f)
+  if (e.data && e.data.type === 't-poke') document.dispatchEvent(new Event('pointerover'))
+})
+</script></head><body><p>x</p></body></html>`
+  const { id } = await tool.execute({ title: '撤监听', html })
+  const msgs = await browser.withPage({ url: `http://127.0.0.1:${port}/parent?id=${id}`, w: 400, h: 300 }, (page) => page.eval(`new Promise((r) => setTimeout(r, 200)).then(() => {
+    const w = document.querySelector('iframe').contentWindow
+    const wait = (ms) => new Promise((r) => setTimeout(r, ms))
+    w.postMessage({ type: 'dsp-state-sync', ops: { clear: true, set: { b: '2' }, del: [] } }, '*')
+    return wait(100).then(() => { w.postMessage({ type: 't-off' }, '*'); return wait(50) })
+      .then(() => { w.postMessage({ type: 'dsp-state-sync', ops: { clear: false, set: { c: '3' }, del: [] } }, '*'); return wait(50) })
+      .then(() => { w.postMessage({ type: 't-poke' }, '*'); return wait(150) })
+  }).then(() => JSON.stringify(msgs.filter((m) => m && /^(t-storage|dsp-reload)$/.test(m.type))))`).then(JSON.parse))
+  assert.deepEqual(msgs, [
+    { type: 't-storage', key: null, area: true, oldValue: null, newValue: null },
+    { type: 't-storage', key: 'b', area: true, oldValue: null, newValue: '2' },
+    { type: 'dsp-reload' },
+  ])
+})
+
+test('旧了的一框：用户按的第一下先拦下（页面不处理、不丢），请外面重载', { skip }, async () => {
+  const html = `<!doctype html><html><head><script>
+let keys = 0
+addEventListener('keydown', () => { keys++; localStorage.setItem('k', String(keys)) })
+localStorage.setItem('a', '1')
+addEventListener('message', (e) => {
+  if (e.data && e.data.type === 't-key') {
+    document.body.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, cancelable: true, key: 'x' }))
+    parent.postMessage({ type: 't-keys', n: keys }, '*')
+  }
+})
+</script></head><body><p>x</p></body></html>`
+  const { id } = await tool.execute({ title: '拦按键', html })
+  const msgs = await browser.withPage({ url: `http://127.0.0.1:${port}/parent?id=${id}`, w: 400, h: 300 }, (page) => page.eval(`new Promise((r) => setTimeout(r, 200)).then(() => {
+    const w = document.querySelector('iframe').contentWindow
+    w.postMessage({ type: 'dsp-state-sync', ops: { clear: false, set: { a: '2' }, del: [] } }, '*')
+    return new Promise((r) => setTimeout(r, 50)).then(() => { w.postMessage({ type: 't-key' }, '*'); return new Promise((r) => setTimeout(r, 150)) })
+  }).then(() => JSON.stringify(msgs.filter((m) => m && /^(dsp-state|dsp-reload|t-keys)$/.test(m.type))))`).then(JSON.parse))
+  assert.deepEqual(msgs, [
+    { type: 'dsp-state', ops: { clear: false, set: { a: '1' }, del: [] } },
+    { type: 'dsp-reload' },
+    { type: 't-keys', n: 0 },
+  ])
+})
+
 test('导出 PNG / PDF', { skip }, async () => {
   const { id } = await tool.execute({ title: '导出图', html: GOOD })
   const png = await post(`${API}export`, { id, format: 'png' })

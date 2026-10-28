@@ -246,3 +246,43 @@ test('页面地址只认结果最后一行：标题里写了别的页面地址�
   // 改名前的结果（/dsh-artifacts/…）照样认，旧会话里的页面还在
   assert.deepEqual(mod._test.pageRefOf({ content: [{ type: 'text', text: `x\n/dsh-artifacts/page?id=${ID}&v=2` }] }), { id: ID, v: 2, h: 0 })
 })
+
+test('页面存的改动：重载前等正在存的都存好；没存上就放回去再试，不算存好', async () => {
+  const { saveState, flushState } = mod._test
+  const ID2 = 'savesave-22222222'
+  const sent = []
+  let finish = null
+  globalThis.fetch = (url, opts) => new Promise((resolve) => {
+    sent.push(JSON.parse(opts.body).ops)
+    finish = (ok) => resolve({ ok, status: ok ? 200 : 500, json: () => Promise.resolve(ok ? { ok: true } : { error: 'disk' }) })
+  })
+  try {
+    saveState(ID2, { clear: false, set: { a: '1' }, del: [] })
+    const first = flushState(ID2)
+    // 第一条还在路上：再来要重载的，等它
+    let done = null
+    flushState(ID2).then((ok) => { done = ok })
+    await new Promise((r) => setTimeout(r, 10))
+    assert.equal(sent.length, 1)
+    assert.equal(done, null)
+    finish(true)
+    assert.equal(await first, true)
+    await new Promise((r) => setTimeout(r, 0))
+    assert.equal(done, true)
+
+    // 没存上：结果是 false；后来又改了的排在它后面，一起再存
+    saveState(ID2, { clear: false, set: { b: '2' }, del: [] })
+    const second = flushState(ID2)
+    await new Promise((r) => setTimeout(r, 0))
+    finish(false)
+    assert.equal(await second, false)
+    saveState(ID2, { clear: false, set: { c: '3' }, del: ['b'] })
+    const third = flushState(ID2)
+    await new Promise((r) => setTimeout(r, 0))
+    assert.deepEqual(sent.at(-1), { clear: false, set: { c: '3' }, del: ['b'] })
+    finish(true)
+    assert.equal(await third, true)
+  } finally {
+    delete globalThis.fetch
+  }
+})
