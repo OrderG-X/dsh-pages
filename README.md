@@ -10,7 +10,7 @@
 
 </div>
 
-![showcase](assets/showcase.jpg)
+<img src="assets/demo.gif" alt="提问 → 模型写页面 → 页面嵌在回复下面能点 → 右侧打开整页 → 两边勾选实时同步 → 跟着换浅色" width="880" />
 
 让 DSH（DeepSeek Harness）的模型把回答做成一页网页：对比、清单、图表、计算器、测验……页面**直接嵌在回复下面**，能点能用，深浅色跟着 DSH 走，填过的东西重开还在。改一次存一版，旧版留着能翻；右侧栏看整页，一键导出 PNG / PDF / HTML。
 

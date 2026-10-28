@@ -33,7 +33,7 @@
     "icon.svg",
     "cordis.patch.yml",
     "README.md",
-    "assets"
+    "assets/hero.svg"
   ],
   "icon": "./icon.svg",
   "dsh": {
