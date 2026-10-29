@@ -291,7 +291,7 @@ const CALC = `<!doctype html><html lang="zh"><head><meta charset="utf-8"><meta n
 <header class="hd"><div class="kicker">计算器</div><h1>房贷月供</h1><p class="sub">改数字马上变</p></header>
 <div class="fields"><label class="field"><span>金额</span><input type="number" value="300"></label><label class="field"><span>年限</span><select><option>30</option></select></label></div>
 <div class="bar"><div class="seg"><button aria-pressed="true">本息</button><button>本金</button></div><button class="primary">算</button><button class="mine">我的</button></div>
-<div class="panel stats"><div class="stat"><div class="l">月供</div><div class="v">12,811</div><div class="m">元</div></div><div class="stat"><div class="l">利息</div><div class="v">161 万</div></div><div class="stat"><div class="l">总额</div><div class="v" id="long">1,537,259.04</div></div></div><div class="panel" id="box"><p>说明</p></div>
+<div class="panel stats"><div class="stat"><div class="l">月供</div><div class="v">12,811</div><div class="m">元</div></div><div class="stat"><div class="l">利息</div><div class="v">161 万</div></div><div class="stat"><div class="l">总额</div><div class="v" id="long">12,345,678,901.23</div></div></div><div class="panel" id="box"><p>说明</p></div>
 <h2 class="mine">明细</h2><div class="panel tbl"><p id="cap">前 3 期</p><table><tr><th>期</th><th>月供</th></tr><tr><td>1</td><td>12,811</td></tr></table></div><ul><li>一</li></ul></main></body></html>`
 
 test('手写页面：没写样式的照设计走，自己写的盖得过它（哪怕选择器更弱）；面板有内边距、长数字缩小；深浅色跟着切；过体检', { skip }, async () => {
