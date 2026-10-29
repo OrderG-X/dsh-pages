@@ -61,7 +61,9 @@ test('注册了工具和路由', () => {
   assert.ok(tool)
   assert.ok(routes.has(ROUTE))
   for (const k of ['list', 'meta', 'thumb', 'export', 'reveal', 'delete', 'state']) assert.ok(routes.has(API + k), k)
-  assert.deepEqual(tool.parameters.required, ['title', 'html'])
+  assert.deepEqual(tool.parameters.required, ['title'])
+  assert.deepEqual(tool.parameters.properties.template.enum, ['report', 'compare', 'checklist', 'dashboard', 'timeline', 'flashcards', 'quiz', 'flow'])
+  assert.equal(tool.parameters.properties.data.type, 'object')
   assert.ok(tool.parameters.properties.page_id)
   assert.deepEqual(tool.parameters.properties.display.enum, ['inline', 'card'])
 })
@@ -104,7 +106,7 @@ test('只给了一段 HTML 时套上外壳，标题转义', () => {
 })
 
 test('空页面、太大的页面报错', async () => {
-  await assert.rejects(tool.execute({ title: 'a', html: '   ' }), /不能为空/)
+  await assert.rejects(tool.execute({ title: 'a', html: '   ' }), /要么传 template \+ data 套模板，要么传 html/)
   await assert.rejects(tool.execute({ title: 'a', html: 'x'.repeat(2 * 1024 * 1024 + 1) }), /太大/)
 })
 

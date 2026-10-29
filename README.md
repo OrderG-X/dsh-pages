@@ -14,13 +14,15 @@
 
 让 DSH（DeepSeek Harness）的模型把回答做成一页网页：对比、清单、图表、计算器、测验……页面**直接嵌在回复下面**，能点能用，深浅色跟着 DSH 走，填过的东西重开还在。改一次存一版，旧版留着能翻；右侧栏看整页，一键导出 PNG / PDF / HTML。
 
-> **一句话**：DeepSeek Harness（DSH）插件，模型用 `show_page` 把回答做成一页，直接显示在对话里、能交互；跟随深浅色、有版本、存好自动体检、能导出。
+常见的报告、对比、清单、数据看板、时间线、学习卡片、测验、流程图有**现成模板**：模型只写内容，插件负责排版和交互，出得快、省 token、不会写坏；模板放不下的才让模型写整页网页。
+
+> **一句话**：DeepSeek Harness（DSH）插件，模型用 `show_page` 把回答做成一页，直接显示在对话里、能交互；8 种常用模板只写内容就行，跟随深浅色、有版本、存好自动体检、能导出。
 >
 > **什么时候用**：「做成一页给我看」「做个房贷计算器」「三款手机对比一下」——看一页比读一段字清楚的时候。
 >
 > **安装**：`dsh plugin add @orderg-x/dsh-pages`（npm 包），重启 DSH。
 >
-> **English:** a DeepSeek Harness (DSH) plugin. The model calls `show_page` to turn an answer into a web page that lives right in the chat: interactive, following DSH's light/dark theme, versioned (edit → v2, flip back anytime), checked automatically in a headless browser after saving, opened full-size in the right sidebar, and exported to PNG / PDF / HTML. Install with the command above, then restart DSH.
+> **English:** a DeepSeek Harness (DSH) plugin. The model calls `show_page` to turn an answer into a web page that lives right in the chat — either by filling one of 8 built-in templates (report, compare, checklist, dashboard, timeline, flashcards, quiz, flow: the model writes only the content) or by writing a full page, which picks up the same design automatically. Pages are interactive, following DSH's light/dark theme, versioned (edit → v2, flip back anytime), checked automatically in a headless browser after saving, opened full-size in the right sidebar, and exported to PNG / PDF / HTML. Install with the command above, then restart DSH.
 
 ## 安装
 
@@ -41,12 +43,35 @@ dsh plugin add @orderg-x/dsh-pages
 5. **我的页面**：页面多了能搜标题；不要的点「×」再点「确定删除？」，整页挪进回收站（`~/.dsh/dsh-pages/trash/`，挪回 `pages/` 就回来了）。
 6. **手机上**（配合 [dsh-mobile](https://github.com/OrderG-X/dsh-mobile)）：页面照样嵌在对话里，标题栏按钮自动变短；「在右侧打开」铺满整屏。
 
+## 模板
+
+<img src="assets/templates.jpg" alt="八种模板：报告、对比、清单、数据看板、时间线、学习卡片、测验、流程图" width="880" />
+
+模型传 `template` 和 `data`（只写内容），插件排成一页：配色、深浅色、手机排版、交互和保存都是现成的。比让模型从头写整页网页快得多，也不会写坏；`data` 写得不对，工具会说清楚哪里不对，模型照着改。
+
+八个模板用同一套设计：标题上方一条蓝色短线加类别小字；大数字当主角；只用一个强调色（DeepSeek 蓝），绿、红、琥珀只表示好、不好、要留意；面板是白底加细线，列表靠细线分隔。图表配色按色盲也分得清的顺序取。
+
+模板放不下、模型自己写整页 HTML 的（计算器、小游戏、特别的版式），存的时候也塞进这套设计：标题、正文、表格、按钮、输入框不写样式就是这个样子，还有现成的颜色变量和页头、面板、大数字、输入框、开关这些类可用（工具说明里列给模型了）。这份样式放在 CSS 的 `@layer` 里，页面自己写的样式总能盖过它，不会把页面改坏。
+
+| 模板 | 适合 | 页面里能做什么 |
+| --- | --- | --- |
+| `report` 报告 | 复盘、调研、总结 | 摘要、指标卡、分节（文字 / 列表 / 表格 / 提示框）、来源 |
+| `compare` 对比 | 选手机、选方案 | 卡片 / 表格切换，「只看不同」，数越大（或越小）越好的自动标出最好的，推荐项高亮 |
+| `checklist` 清单 / 计划 | 待办、出行、搬家 | 勾选自动保存，进度条，「只看没做的」，重置 |
+| `dashboard` 数据看板 | 周报、销量、流量 | 指标卡带涨跌，柱状图 / 折线图 / 环形图（自己画，不靠外部库），鼠标移上去看数 |
+| `timeline` 时间线 | 计划、历史、进度 | 已完成 / 进行中 / 没开始 |
+| `flashcards` 学习卡片 | 背单词、记概念 | 点卡片翻面，「记住了」计数，只看没记住的，打乱 |
+| `quiz` 测验 | 自测、出题 | 点了就判对错、给解释、算分，重做 |
+| `flow` 流程图 | 审批、操作步骤 | 自动分层排版，判断分叉、跨层和往回的连线自动绕开 |
+
+文字里能用 `**加粗**`、`` `代码` ``、`[链接](https://…)`；页面上的按钮文字跟着内容的语言走（中文 / 英文）。
+
 ## 深浅色
 
 - 卡片、右侧栏用 DSH 自己的设计变量，跟着 DSH 走。
 - 页面里也跟着换，**不重载**（填了的表单、拖过的滑块都还在）：页面送出去时塞一小段脚本，在 `<html>` 上设 `data-theme="light|dark"`、`data-bs-theme`、`.dark` 和 `color-scheme`，自己写的变量、Tailwind、DaisyUI、Bootstrap 都认。
 - 页面里写的 `@media (prefers-color-scheme: dark)` 也改成听 DSH 的（DSH 选了深色、系统是浅色时照样变深）。
-- 模型只给一段 HTML 时，套的外壳自带一套深浅色变量（`--fg` `--bg` `--card` `--line` `--accent`）。
+- 模型自己写的页面带着上面那套设计的深浅色变量（`--bg` `--surface` `--fg` `--muted` `--line` `--accent` 等），用了就自动跟着切。
 
 ## 页面能存东西
 
@@ -75,7 +100,9 @@ dsh plugin add @orderg-x/dsh-pages
 | 参数 | 必填 | 说明 |
 | --- | --- | --- |
 | `title` | 是 | 页面标题，短一点 |
-| `html` | 是 | 完整、自包含的 HTML；样式脚本写在页面里，库可以从 cdn.jsdelivr.net / cdnjs.cloudflare.com / unpkg.com 引 |
+| `template` | 二选一 | 套模板：`report` / `compare` / `checklist` / `dashboard` / `timeline` / `flashcards` / `quiz` / `flow`，配 `data` |
+| `data` | 套模板时 | 模板的内容（JSON），各模板的字段写在工具说明里，示例见 `test/fixtures/template-samples.mjs` |
+| `html` | 二选一 | 不用模板时：完整、自包含的 HTML；样式脚本写在页面里，库可以从 cdn.jsdelivr.net / cdnjs.cloudflare.com / unpkg.com 引 |
 | `page_id` | 否 | 改已有页面时填上次返回的 `page_id`，存成新版本 |
 | `display` | 否 | `inline`（默认，嵌在对话里）或 `card`（只放缩略图卡片，点开在右侧看） |
 
@@ -103,6 +130,8 @@ dsh plugin add @orderg-x/dsh-pages
 ```
 
 - `lib/index.js` —— 工具、路由、把门、导出
+- `lib/design.js` —— 一套设计（颜色变量、基本样子、现成的类），模板和手写页面共用
+- `lib/templates.js` —— 8 个模板：内容校验、排版、页面里的交互小脚本
 - `lib/store.js` —— 存页面、版本、页面数据，删页面（同一页的写入排队）
 - `lib/runtime.js` —— 塞进页面的小脚本：深浅色、报高度、外部链接新窗口开、记报错、能用的 localStorage
 - `lib/check.js` —— 体检、整页截图、存 PDF
@@ -113,13 +142,13 @@ dsh plugin add @orderg-x/dsh-pages
 ## 测试
 
 ```sh
-npm test                                          # 服务端、客户端、体检（有 Chrome / Edge 时用真浏览器）
+npm test                                          # 服务端、客户端、模板、体检（有 Chrome / Edge 时用真浏览器）
 node e2e/e2e-pages.mjs --dsh 0.2.1-rc.3 [--light] # 临时装一个 DSH 网页版 + 假模型 + 无头 Chrome，整套走一遍
 ```
 
 ## 已验证
 
-DeepSeek Harness 0.2.1-rc.3：临时 DSH 网页版端到端 31 项，深色、浅色各跑一遍（写的时候的卡片、嵌在对话里、高度跟内容、深浅色切换不重载、右侧栏、改出 v2 和翻回 v1、导出 HTML / PNG、全部页面带缩略图、页面里勾的东西重开 DSH 还在、手机宽度、删页面挪进回收站）。桌面端用 DeepSeek-V4.1-Flash 实测：「做一个房贷计算器」一轮两步直接调 `show_page`，深色适配好，体检通过。
+DeepSeek Harness 0.2.1-rc.2 / rc.3：临时 DSH 网页版端到端 35 项，深色、浅色各跑一遍（写的时候的卡片、嵌在对话里、高度跟内容、深浅色切换不重载、右侧栏、改出 v2 和翻回 v1、导出 HTML / PNG、全部页面带缩略图、页面里勾的东西重开 DSH 还在、两处同开实时同步、手机宽度、删页面挪进回收站、套模板）。8 个模板各自在真浏览器里点过（勾选、切换、翻卡、答题、图表提示、流程图连线），720 和 390 宽、深浅色都过体检。桌面端用 DeepSeek-V4.1-Flash 实测：清单、数据看板都自己选对模板、一步到位；不用模板自己写的房贷计算器、个税计算器、旅行 AA 分摊，都用上了同一套设计，深色适配好，体检通过。
 
 ## 反馈
 

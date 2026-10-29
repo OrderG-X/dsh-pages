@@ -85,6 +85,8 @@ function seedWelcome(cliDir) {
 }
 
 // ── 假模型：Anthropic Messages，SSE；show_page 的参数分几十段慢慢流出来，像真模型在写 ──
+// 套模板：模型只给内容
+const TPL = { title: '搬家清单', template: 'checklist', data: { subtitle: '按时间排', groups: [{ title: '提前一周', items: ['约搬家公司', { text: '办宽带移机', tag: '要预约' }] }, { title: '当天', items: ['交钥匙'] }] } }
 const llmLog = []
 let pageResult = ''
 let pageId = ''
@@ -134,6 +136,7 @@ const llm = http.createServer((req, res) => {
       const v2 = { title: '三款旗舰手机对比（按价格排）', html: PAGE.html.replace(/三台旗舰，各让一步/, '按价格从低到高'), page_id: pageId }
       return sse(res, [{ type: 'text', text: '改一下标题和排序。' }, { type: 'tool_use', id: 'toolu_e2e_page2', name: 'show_page', input: v2 }], 'tool_use')
     }
+    if (said.includes('MAKE-TPL')) return sse(res, [{ type: 'text', text: '做成一张清单。' }, { type: 'tool_use', id: 'toolu_e2e_tpl', name: 'show_page', input: TPL }], 'tool_use')
     if (said.includes('MAKE-PAGE')) {
       if (!(body.tools || []).some((t) => t.name === 'show_page')) return sse(res, [{ type: 'text', text: '没有 show_page。' }], 'end_turn')
       return sse(res, [{ type: 'text', text: '我把三款机型做成一页对比。' }, { type: 'tool_use', id: 'toolu_e2e_page', name: 'show_page', input: PAGE, slow: true }], 'tool_use')
@@ -479,6 +482,17 @@ try {
   const gone = await until(`!document.querySelector('.dsp-gitem')`, 5000)
   const trashed = fs.existsSync(path.join(HOME, '.dsh', 'dsh-pages', 'trash')) && fs.readdirSync(path.join(HOME, '.dsh', 'dsh-pages', 'trash')).some((n) => n.endsWith(pageId))
   check('「我的页面」点两下删掉，页面挪进回收站', armed && gone && trashed, `${armed} / ${gone} / ${trashed}`)
+
+  // ⑩ 套模板：模型只给 template + data，插件排成页面，照样嵌在对话里、体检
+  const oldId = pageId
+  await say('MAKE-TPL 做个搬家清单')
+  const tplSrc = await until(`(() => { const f = ${INLINE}; const s = f && f.getAttribute('src'); return s && !s.includes('${oldId}') && f.getBoundingClientRect().height > 100 && s })()`, 60000)
+  await sleep(800)
+  await shot('9-template')
+  check('套模板：对话里嵌出清单页', tplSrc, String(tplSrc))
+  check('套模板：模型拿到的结果里说了用的哪个模板、体检没问题', /用的清单模板/.test(pageResult) && /体检：没发现问题/.test(pageResult), pageResult)
+  const tplHtml = tplSrc ? await page(`fetch(${JSON.stringify(tplSrc)}).then((r) => r.text())`) : ''
+  check('套模板：页面是插件排的（带模板标记和勾选框）', /content="checklist"/.test(tplHtml) && /class="todo"/.test(tplHtml), tplHtml.slice(0, 300))
 
   const errs = webLog.split('\n').filter((l) => /dsh-pages/i.test(l) && /error|fail|失败/i.test(l))
   check('DSH 日志里没有插件报错', !errs.length, errs.slice(0, 5).join('\n'))

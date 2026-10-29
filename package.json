@@ -1,11 +1,11 @@
 {
   "name": "@orderg-x/dsh-pages",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
     "test": "node --test --test-concurrency=1 test/*.mjs"
   },
-  "description": "Pages for DeepSeek Harness: the model turns an answer into a web page that works right inside the chat. Follows light/dark, keeps versions, checks itself, opens full-size in the right sidebar, exports to PNG / PDF / HTML.",
+  "description": "Pages for DeepSeek Harness: the model turns an answer into a web page that works right inside the chat, from 8 built-in templates or written by hand, all in one design. Follows light/dark, keeps versions, checks itself, opens full-size in the right sidebar, exports to PNG / PDF / HTML.",
   "license": "MIT",
   "repository": {
     "type": "git",
