@@ -20,19 +20,23 @@
 >
 > **什么时候用**：「做成一页给我看」「做个房贷计算器」「三款手机对比一下」——看一页比读一段字清楚的时候。
 >
-> **安装**：`dsh plugin add @orderg-x/dsh-pages`（npm 包），重启 DSH。
+> **安装**：DSH「插件」页 →「添加插件」，填 `@orderg-x/dsh-pages`（npm 包，连不上 npm 会自动换国内镜像），重启 DSH。
 >
-> **English:** a DeepSeek Harness (DSH) plugin. The model calls `show_page` to turn an answer into a web page that lives right in the chat — either by filling one of 8 built-in templates (report, compare, checklist, dashboard, timeline, flashcards, quiz, flow: the model writes only the content) or by writing a full page, which picks up the same design automatically. Pages are interactive, following DSH's light/dark theme, versioned (edit → v2, flip back anytime), checked automatically in a headless browser after saving, opened full-size in the right sidebar, and exported to PNG / PDF / HTML. Install with the command above, then restart DSH.
+> **English:** a DeepSeek Harness (DSH) plugin. The model calls `show_page` to turn an answer into a web page that lives right in the chat — either by filling one of 8 built-in templates (report, compare, checklist, dashboard, timeline, flashcards, quiz, flow: the model writes only the content) or by writing a full page, which picks up the same design automatically. Pages are interactive, following DSH's light/dark theme, versioned (edit → v2, flip back anytime), checked automatically in a headless browser after saving, opened full-size in the right sidebar, and exported to PNG / PDF / HTML. Install: on the DSH Plugins page, click Add plugin and enter `@orderg-x/dsh-pages`, then restart DSH.
 
 ## 安装
 
-```sh
-dsh plugin add @orderg-x/dsh-pages
+在 DSH「插件」页点「添加插件」，填包名：
+
+```
+@orderg-x/dsh-pages
 ```
 
-也可以直接装发布包：`dsh plugin add https://github.com/OrderG-X/dsh-pages/releases/latest/download/dsh-pages.tgz`。装完**重启 DSH**（客户端代码在 DSH 启动时打包，不重启看不到页面）。DSH「插件」页里显示为「页面」。
+这是 npm 包：按包名装时，DSH 连不上 npm 官方源会自动改用国内镜像（npmmirror），不经过 GitHub。也可以填发布包地址 `https://github.com/OrderG-X/dsh-pages/releases/latest/download/dsh-pages.tgz`，那样要能连上 GitHub。
 
-开发时可以直接链到本地目录：`dsh plugin --profile desktop add link:/path/to/dsh-pages`，改了代码同样要重启。
+装完**重启 DSH**（客户端代码在 DSH 启动时打包，不重启看不到页面）。DSH「插件」页里显示为「页面」。
+
+开发时可以直接链到本地目录：在「添加插件」里填本仓库的绝对路径，装上的是 `link:`，改了代码同样要重启。
 
 ## 用起来是什么样
 
