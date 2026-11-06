@@ -8,6 +8,11 @@
   <a href="https://github.com/awesome-dsh-plugin/awesome-dsh-plugin"><img src="https://img.shields.io/badge/DSH-plugin-4D6BFE" alt="DSH plugin" /></a>
 </p>
 
+<p>
+  <a href="README.md"><b>简体中文</b></a> ·
+  <a href="README.en.md">English</a>
+</p>
+
 </div>
 
 ![提问 → 模型写页面 → 页面嵌在回复下面能点 → 右侧打开整页 → 两边勾选实时同步 → 跟着换浅色](assets/demo.gif)
@@ -36,7 +41,7 @@
 
 装完**重启 DSH**（客户端代码在 DSH 启动时打包，不重启看不到页面）。DSH「插件」页里显示为「页面」。
 
-**更新**：在「插件」页把它卸载，再按上面添加一次。新版发布后大约一天按包名才装得到（DSH 装插件用的 pnpm 默认不装刚发布的版本），急的话填发布包地址。
+**更新**：DSH 0.2.2 起，在「插件」页点开它，点「更新到 …」；更老的 DSH 先卸载，再按上面添加一次。新版发布后大约一天才装得到（DSH 装插件用的 pnpm 默认不装刚发布的版本）；急的话卸载后填发布包地址，不过这样装的以后不能点更新。
 
 开发时可以直接链到本地目录：在「添加插件」里填本仓库的绝对路径，装上的是 `link:`，改了代码同样要重启。
 

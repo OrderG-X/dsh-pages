@@ -1,6 +1,7 @@
 {
   "meta": {
     "title": "页面",
+    "detail": "README.md",
     "description": "模型把回答做成一页网页：对话里直接出卡片，点开在右侧看整页。"
   }
 }
