@@ -1,6 +1,6 @@
 {
   "name": "@orderg-x/dsh-pages",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "type": "module",
   "scripts": {
     "test": "node --test --test-concurrency=1 test/*.mjs"
@@ -33,7 +33,9 @@
     "icon.svg",
     "cordis.patch.yml",
     "README.md",
-    "assets/hero.svg"
+    "assets/hero.svg",
+    "assets/demo.gif",
+    "assets/templates.jpg"
   ],
   "icon": "./icon.svg",
   "dsh": {
