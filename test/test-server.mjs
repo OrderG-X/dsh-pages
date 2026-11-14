@@ -62,7 +62,7 @@ test('注册了工具和路由', () => {
   assert.ok(routes.has(ROUTE))
   for (const k of ['list', 'meta', 'thumb', 'export', 'reveal', 'delete', 'state']) assert.ok(routes.has(API + k), k)
   assert.deepEqual(tool.parameters.required, ['title'])
-  assert.deepEqual(tool.parameters.properties.template.enum, ['report', 'compare', 'checklist', 'dashboard', 'timeline', 'flashcards', 'quiz', 'flow'])
+  assert.deepEqual(tool.parameters.properties.template.enum, ['report', 'compare', 'checklist', 'dashboard', 'timeline', 'flashcards', 'quiz', 'flow', 'mindmap', 'roadmap'])
   assert.equal(tool.parameters.properties.data.type, 'object')
   assert.ok(tool.parameters.properties.page_id)
   assert.deepEqual(tool.parameters.properties.display.enum, ['inline', 'card'])

@@ -311,3 +311,19 @@ test('导出 PNG / PDF', { skip }, async () => {
   assert.equal(pdf.status, 200)
   assert.equal(fs.readFileSync(pdf.body.path).subarray(0, 5).toString(), '%PDF-')
 })
+
+test('存 PDF：视口按 A4 去掉页边距的宽度开，脚本量着画的线和打出来的排版一致', async () => {
+  const { printPage } = await import(new URL('../lib/check.js', import.meta.url))
+  const seen = {}
+  const fake = {
+    withPage: async (opts, fn) => {
+      seen.w = opts.w
+      return fn({ eval: async () => undefined, call: async (m, p) => { seen.print = p; return { data: Buffer.from('%PDF-').toString('base64') } } })
+    },
+  }
+  const buf = await printPage(fake, 'http://x')
+  assert.equal(buf.toString(), '%PDF-')
+  // (8.27 - 0.4 × 2) 英寸 × 96 = 717 像素
+  assert.equal(seen.w, 717)
+  assert.ok(Math.abs(seen.print.paperWidth - seen.print.marginLeft - seen.print.marginRight - 7.47) < 1e-9)
+})

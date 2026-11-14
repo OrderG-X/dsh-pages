@@ -112,4 +112,68 @@ export const SAMPLES = {
       ],
     },
   },
+  mindmap: {
+    title: '新产品上线准备',
+    data: {
+      center: '新产品上线',
+      branches: [
+        { text: '产品', children: [{ text: '功能冻结', children: ['核心流程走查', '埋点补齐'] }, '定价方案', { text: '帮助文档', note: '中英两版' }] },
+        { text: '技术', children: ['压测到 5 倍峰值', '灰度发布', { text: '回滚预案', children: ['数据库快照', '开关降级'] }] },
+        { text: '市场', children: ['发布会', '首发渠道', 'KOL 合作'] },
+        { text: '运营', children: ['客服培训', '首周值班表'] },
+        { text: '风险', children: ['竞品同期发布', '服务器成本超预算'] },
+      ],
+    },
+  },
+  roadmap: {
+    title: '多模态影像辅助诊断技术路线',
+    data: {
+      layers: [
+        { label: '研究基础', items: ['临床影像诊断耗时长、漏诊率高', { text: '多模态大模型进展', note: '图文对齐、少样本' }] },
+        {
+          label: '研究内容',
+          groups: [
+            { title: '研究内容一：数据', items: ['多中心影像数据集构建', '专家标注规范'] },
+            { title: '研究内容二：模型', items: ['影像—报告对齐预训练', { text: '病灶定位与分级', key: true }] },
+            { title: '研究内容三：验证', items: ['前瞻性临床试验'] },
+          ],
+        },
+        { label: '关键技术', items: ['对比学习', '知识蒸馏', '不确定性估计'] },
+        { label: '预期成果', items: [{ text: '辅助诊断系统原型', key: true }, '论文 6–8 篇', '发明专利 2 项'] },
+      ],
+    },
+  },
+}
+
+// 按时间的路线图（roadmap 的另一种写法）
+export const LANES = {
+  title: '2027 产品路线图',
+  data: {
+    periods: ['2027 Q1', 'Q2', 'Q3', 'Q4'],
+    now: 'Q2',
+    milestones: [{ time: 'Q2', text: '2.0 公测' }, { time: 'Q4', text: '2.0 正式发布' }],
+    lanes: [
+      { name: '编辑器', items: [{ text: '协同编辑', start: '2027 Q1', end: 'Q2', status: 'done' }, { text: '插件市场', start: 'Q2', end: 'Q3', status: 'now' }, { text: 'AI 改写', start: 'Q3', end: 'Q4', status: 'todo' }] },
+      { name: '移动端', items: [{ text: '离线模式', start: 'Q2', status: 'now' }, { text: '平板适配', start: 'Q3', end: 'Q4', status: 'todo', note: '先做 iPad' }] },
+      { name: '平台', items: [{ text: '数据迁移到新集群', start: '2027 Q1', end: 'Q3', status: 'now' }, { text: '权限系统重做', start: 'Q2', end: 'Q4', status: 'todo' }] },
+    ],
+  },
+}
+
+// 技术路线带连线（逐条连，不再层和层之间画大箭头）
+export const ROUTE_LINKS = {
+  title: '推荐系统改版技术路线',
+  data: {
+    layers: [
+      { label: '问题', items: [{ id: 'p', text: '点击率连续三个月下滑' }] },
+      { label: '分析', items: [{ id: 'a1', text: '召回覆盖不足' }, { id: 'a2', text: '排序特征过时' }] },
+      { label: '方案', items: [{ id: 's1', text: '多路召回' }, { id: 's2', text: '实时特征' }, { id: 's3', text: '重训排序模型' }] },
+      { label: '验证', items: [{ id: 'v', text: 'A/B 实验两周', key: true }] },
+    ],
+    links: [
+      { from: 'p', to: 'a1' }, { from: 'p', to: 'a2' },
+      { from: 'a1', to: 's1' }, { from: 'a2', to: 's2' }, { from: 'a2', to: 's3' },
+      { from: 's1', to: 'v' }, { from: 's2', to: 'v' }, { from: 's3', to: 'v', label: '上线前' },
+    ],
+  },
 }

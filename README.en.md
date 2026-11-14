@@ -19,9 +19,9 @@
 
 Let the model in DSH (DeepSeek Harness) turn an answer into a web page: comparisons, checklists, charts, calculators, quizzes... The page is **embedded right under the reply** and works as is. It follows DSH's light/dark theme, and whatever you filled in is still there when you reopen it. Every edit is saved as a new version, and old ones stay one click away. The right sidebar shows the full page, and one click exports PNG / PDF / HTML.
 
-Common page types (reports, comparisons, checklists, dashboards, timelines, flashcards, quizzes, flowcharts) have **ready-made templates**: the model writes only the content, and the plugin handles layout and interaction. It is fast, saves tokens and doesn't break. The model writes a full web page only when no template fits.
+Common page types (reports, comparisons, checklists, dashboards, timelines, flashcards, quizzes, flowcharts, mind maps, roadmaps) have **ready-made templates**: the model writes only the content, and the plugin handles layout and interaction. It is fast, saves tokens and doesn't break. The model writes a full web page only when no template fits.
 
-> **In one line:** a DeepSeek Harness (DSH) plugin. The model uses `show_page` to turn an answer into a page that shows right in the chat and is interactive. The 8 common templates need content only. Pages follow light/dark, have versions, are checked automatically after saving, and can be exported.
+> **In one line:** a DeepSeek Harness (DSH) plugin. The model uses `show_page` to turn an answer into a page that shows right in the chat and is interactive. The 10 common templates need content only. Pages follow light/dark, have versions, are checked automatically after saving, and can be exported.
 >
 > **Use it for:** "Make that into a page", "Build me a mortgage calculator", "Compare these three phones" — whenever a page is clearer than a paragraph of text.
 >
@@ -56,9 +56,11 @@ For development you can link a local directory: enter this repo's absolute path 
 
 ![Eight templates: report, compare, checklist, dashboard, timeline, flashcards, quiz, flow](assets/templates.jpg)
 
+![Mind map and the two roadmap styles: top-down research route and time-based swimlanes](assets/diagrams.jpg)
+
 The model passes `template` and `data` (content only), and the plugin lays out the page: colors, light/dark, phone layout, interaction and saving are all built in. This is much faster than having the model write a whole web page from scratch, and it doesn't break. If `data` is wrong, the tool says exactly what is wrong, and the model fixes it.
 
-All eight templates share one design: a short blue line and a small category label above the title; big numbers as the stars; a single accent color (DeepSeek blue), with green, red and amber meaning only good, bad and watch out; panels are white with a thin border, and lists are separated by thin lines. Chart colors are picked in an order that stays distinguishable for color-blind users.
+All templates share one design: a short blue line and a small category label above the title; big numbers as the stars; a single accent color (DeepSeek blue), with green, red and amber meaning only good, bad and watch out; panels are white with a thin border, and lists are separated by thin lines. Chart colors are picked in an order that stays distinguishable for color-blind users.
 
 When a template doesn't fit and the model writes a full HTML page itself (calculators, small games, unusual layouts), the same design is applied on save: headings, body text, tables, buttons and inputs look like this without any styling of their own, and ready-made color variables and classes for headers, panels, big numbers, inputs and switches are available (the tool description lists them for the model). This stylesheet lives in a CSS `@layer`, so the page's own styles always win and nothing gets broken.
 
@@ -72,6 +74,8 @@ When a template doesn't fit and the model writes a full HTML page itself (calcul
 | `flashcards` | Vocabulary, concepts | Click a card to flip it, "Got it" counter, show only the ones you haven't got, shuffle |
 | `quiz` | Self-tests, making questions | Click to see right or wrong, with explanation and score, retry |
 | `flow` | Approvals, step-by-step procedures | Layers laid out automatically, branches, cross-layer and backward connectors routed around each other |
+| `mindmap` | Sorting out ideas, reading notes, knowledge structure | Center in the middle with branches to both sides; falls back to one side, then to a vertical outline on phones; click a node to fold it (remembered), expand / collapse all; a Markdown outline works too |
+| `roadmap` | Technical routes for grant proposals and theses, product / project roadmaps | Two styles: top-down stages (stage names on the left, dashed groups, arrows between layers or one connector per link); time-based swimlanes (overlapping items wrap to a new row, milestones, the current period marked, scrolls sideways when there are many periods) |
 
 Text can use `**bold**`, `` `code` ``, and `[links](https://…)`. Button text on the page follows the language of the content (Chinese / English).
 
@@ -109,7 +113,7 @@ If there are problems, the model fixes them and calls the tool again; if there a
 | Parameter | Required | Description |
 | --- | --- | --- |
 | `title` | Yes | Page title, keep it short |
-| `template` | One of the two | Use a template: `report` / `compare` / `checklist` / `dashboard` / `timeline` / `flashcards` / `quiz` / `flow`, together with `data` |
+| `template` | One of the two | Use a template: `report` / `compare` / `checklist` / `dashboard` / `timeline` / `flashcards` / `quiz` / `flow` / `mindmap` / `roadmap`, together with `data` |
 | `data` | With a template | The template's content (JSON). Each template's fields are in the tool description; for examples see `test/fixtures/template-samples.mjs` |
 | `html` | One of the two | Without a template: a complete, self-contained HTML page; write styles and scripts in the page, and libraries can be loaded from cdn.jsdelivr.net / cdnjs.cloudflare.com / unpkg.com |
 | `page_id` | No | To edit an existing page, pass the `page_id` returned last time; it is saved as a new version |
@@ -140,7 +144,7 @@ client   turnTail slot (page / thumbnail card under the reply) · toolview slot 
 
 - `lib/index.js` — tools, routes, gatekeeping, export
 - `lib/design.js` — the shared design (color variables, base look, ready-made classes), used by templates and hand-written pages
-- `lib/templates.js` — the 8 templates: content validation, layout, the small in-page interaction scripts
+- `lib/templates.js` — the 10 templates: content validation, layout, the small in-page interaction scripts
 - `lib/store.js` — saving pages, versions and page data, deleting pages (writes to the same page are queued)
 - `lib/runtime.js` — the small script injected into pages: light/dark, reporting height, opening external links in a new window, logging errors, a working localStorage
 - `lib/check.js` — the check, full-page screenshots, saving PDF
@@ -157,7 +161,7 @@ node e2e/e2e-pages.mjs --dsh 0.2.1-rc.3 [--light] # installs a temporary DSH web
 
 ## Verified
 
-DeepSeek Harness 0.2.1-rc.2 / rc.3: 35 end-to-end checks on a temporary DSH web build, run once in dark and once in light (the card while writing, embedded in the chat, height following content, light/dark switching without reload, the right sidebar, making v2 and flipping back to v1, exporting HTML / PNG, all pages with thumbnails, things ticked on a page still there after reopening DSH, live sync when open in two places, phone width, deleting a page into the trash, using templates). Each of the 8 templates was clicked through in a real browser (ticking, switching, flipping cards, answering, chart tooltips, flowchart connectors), and all passed the check at 720 and 390 width, in light and dark. Tested on the desktop app with DeepSeek-V4.1-Flash: for a checklist and a dashboard it picked the right template by itself in one step; for a mortgage calculator, an income tax calculator and a trip cost-splitter written without a template, it used the same design, dark mode was handled, and the check passed.
+DeepSeek Harness 0.2.1-rc.2 through 0.2.2-rc.3: 35 end-to-end checks on a temporary DSH web build, run once in dark and once in light (the card while writing, embedded in the chat, height following content, light/dark switching without reload, the right sidebar, making v2 and flipping back to v1, exporting HTML / PNG, all pages with thumbnails, things ticked on a page still there after reopening DSH, live sync when open in two places, phone width, deleting a page into the trash, using templates). Each template was clicked through in a real browser (ticking, switching, flipping cards, answering, chart tooltips, flowchart connectors, folding mind map nodes, roadmap connectors and sideways scrolling), and all passed the check at 720 and 390 width, in light and dark; PDF export lays the page out at paper width, so connectors stay in place. Tested on the desktop app with DeepSeek-V4.1-Flash: for a checklist, a dashboard, a "learn Python from zero" mind map, an NSFC grant proposal technical route and a quarterly product roadmap it picked the right template by itself in one step; for a mortgage calculator, an income tax calculator and a trip cost-splitter written without a template, it used the same design, dark mode was handled, and the check passed.
 
 ## Feedback
 
